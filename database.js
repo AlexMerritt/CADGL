@@ -68,23 +68,26 @@ FirebaseDB.prototype.StorageAdd = function(path, data) {
 }
 
 FirebaseDB.prototype.StorageGetData = function(path, callback) {
+    console.log("Sending request to firebase");
     this.StorageGetUrl(path, function(url) {
+
         var xmlHttp = new XMLHttpRequest();
 
         xmlHttp.onreadystatechange = function() {
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            console.log(xmlHttp);
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                 callback(xmlHttp.responseText);
             }
         }
 
-        xmlHttp.open( "GET", url, true ); // false for synchronous request
+        xmlHttp.open( "GET", url, true );
         xmlHttp.send( null );
+        
     });
 }
 
 FirebaseDB.prototype.StorageGetUrl = function(path, callback) {
     this.storage.child(path).getDownloadURL().then(function(url){
-
         callback(url);
     }).catch(function(error) {
         switch (error.code) {
