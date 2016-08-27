@@ -104,6 +104,7 @@ ModelCylinder.prototype.Create = function(numLevels) {
         }
 
         this.levels.push(l);
+        console.log(l.radus);
     }
 
     this.BuildMesh();
@@ -170,11 +171,11 @@ ModelCylinder.prototype.UpdateMesh = function() {
 }
 
 ModelCylinder.prototype.GetData = function(){
-    var numItems = NUM_DEGREE * this.levels.length;
-
     var output = {};
+    console.log(output);
     var metaData = {};
     metaData['num_levels'] = this.levels.length;
+    console.log(this.levels.length);
 
     output['meta_data'] = metaData;
     output['data'] = {};
@@ -182,10 +183,7 @@ ModelCylinder.prototype.GetData = function(){
     for(var i = 0; i < this.levels.length; i++) {
         var l = {};
         l['num_values'] = NUM_DEGREE;
-        l['values'] = this.levels[i].radus.toString();
-        console.log(l);
-        console.log(output);
-        console.log(i);
+        l['values'] = this.levels[i].radus; // I am doing it this vay because I was getting incosistant results when saving as a string array
         output['data'][i] = l;
     }
 
@@ -195,17 +193,21 @@ ModelCylinder.prototype.GetData = function(){
 }
 
 ModelCylinder.prototype.CreateFromData = function(data) {
-    // Might be helpful to have it come pre parsed
-    var j = JSON.parse(data);
-
-    var metadata = j['meta_data'];
-    var levelsData = j['data'];
+    var metadata = data['meta_data'];
+    var levelsData = data['data'];
 
     for(i in levelsData){
         var lData = levelsData[i];
-        var vals = lData['values'].split(',');
+        var vals = lData['values'];
+        var numVals = lData['num_values'];
         
-        var arr = new Float32Array(vals);
+        var arr = new Float32Array(numVals);
+
+        // I am doing it this vay because I was getting incosistant results when saving as a string array
+        for(i in vals){
+            arr[i] = vals[i];
+        }
+
         var l = new Level();
         l.radus = arr.slice();
 
@@ -222,4 +224,6 @@ ModelCylinder.prototype.Widen = function(ammount, level) {
     }
 
     this.UpdateMesh();
+
+    console.log(this.levels.length);
 }

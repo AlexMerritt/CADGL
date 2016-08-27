@@ -39,9 +39,19 @@ function MainScene() {
     this.rotation = 0;
 
     this.modelSaved = false;
+
+    console.log('main scene constructor');
+
+    /*
+    var m = new ModelCylinder();
+    m.Create(10);
+    Database.DBUpdate('model/cylnd', m.GetData());
+    */
     
-    Database.StorageGetData('Model/cylnd.cyl', function(data) {
+    Database.DBGet('model/cylnd', function(data) {
         this.cylnd.CreateFromData(data);
+        console.log("db get initialize model");
+        //this.cylnd.Create(4);
         this.cylnd.SetPosition(-400, 0, 0);
         console.log(this.cylnd);
         this.sceneObject.add(this.cylnd.GetMesh());
@@ -72,7 +82,7 @@ MainScene.prototype.Update = function(){
     Input.Update();
     this.rotation += 0.01;
 
-/*
+
     if(this.cylnd.IsLoaded()) {
         //this.cylnd.SetRotation(0, -this.rotation, 0);
 
@@ -87,12 +97,12 @@ MainScene.prototype.Update = function(){
         if(!this.modelSaved && Input.IsKeyPressed(KeyCode.P)){
             console.log("Save Model");
             this.modelSaved = true;
-
-            var d = this.cylnd.GetData();
-
-            var blob = new Blob([JSON.stringify(d)]);
-
-            Database.StorageAdd("Model/cylnd.cyl", blob);
+var d = this.cylnd.GetData();
+            console.log(this.cylnd.levels.length);
+            
+            
+            Database.DBUpdate('model/cylnd', d);
+            console.log(this.cylnd.levels.length);
         }
     }
 
@@ -103,6 +113,6 @@ MainScene.prototype.Update = function(){
     if(this.teapot.IsLoaded()) {
         this.teapot.SetRotation(0, -this.rotation, 0);
     }
-*/
+
     
 }

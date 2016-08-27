@@ -48,14 +48,23 @@ FirebaseDB.prototype.Init = function() {
 
     
 }
+FirebaseDB.prototype.DBUpdate = function(path, data){
+    this.database.child(path).set(data);
+}
 
-FirebaseDB.prototype.DBAdd = function(path, data){
+FirebaseDB.prototype.DBAddNew = function(path, data){
     var newPostRef = this.database.child(path).push();
     newPostRef.set(data);
     return newPostRef.key;
 }
 
 FirebaseDB.prototype.DBGet = function(path, callback) {
+    this.database.child(path).once('value').then(function(snapshot){
+        callback(snapshot.val());
+    });
+}
+
+FirebaseDB.prototype.DBBindTo = function(path, callback) {
     this.database.child(path).on('value', function(snapshot){
         callback(snapshot.val());
     });
@@ -70,9 +79,26 @@ FirebaseDB.prototype.StorageAdd = function(path, data) {
 FirebaseDB.prototype.StorageGetData = function(path, callback) {
     console.log("Sending request to firebase");
     this.StorageGetUrl(path, function(url) {
+        console.log(url+".json");
+        $.ajax({
+            type: "GET",
+            dataType: 'jsonp',
+            url: url+".json",
+            crossDomain : true,
+            xhrFields: {
+                withCredentials: true
+            }
+        })
+        .done(function( data ) {
+            console.log("done");
+        })
+        .fail( function(xhr, textStatus, errorThrown) {
+            console.log(xhr.responseText);
+            console.log(textStatus);
+        });
 
-        var xmlHttp = new XMLHttpRequest();
-
+        
+        /*
         xmlHttp.onreadystatechange = function() {
             console.log(xmlHttp);
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
@@ -81,8 +107,7 @@ FirebaseDB.prototype.StorageGetData = function(path, callback) {
         }
 
         xmlHttp.open( "GET", url, true );
-        xmlHttp.send( null );
-        
+        xmlHttp.send( null );*/
     });
 }
 
