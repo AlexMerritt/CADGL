@@ -1,0 +1,11 @@
+{
+  "name": "CADGL",
+  "version": "0.0.0",
+  "main": "index.html",
+  "window": {
+    "title": "Tools",
+    "toolbar": false,
+    "width": 1280,
+    "height": 720
+  }
+}

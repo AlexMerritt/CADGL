@@ -1,0 +1,1 @@
+"C:\Program Files\NWJS\nw.exe" .
