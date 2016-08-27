@@ -53,6 +53,7 @@ function MainScene() {
 
 MainScene.prototype.CreateNewModel = function() {
     var callback = function(){
+        this.ResetScene();
         var name =  $("#model-name").val();
 
         this.model = new ModelCylinder();
@@ -63,6 +64,14 @@ MainScene.prototype.CreateNewModel = function() {
         Database.DBAddNew('model_list', name);
 
         this.sceneObject.add(this.model.GetMesh());
+
+        this.modelControls[name] = function (modelName){
+            this.LoadModel(modelName);
+        }.bind(this, name);
+
+        this.gui.add(this.modelControls, name);
+
+
     }.bind(this);
 
     // Move this whole thing to a dialog ui utility
