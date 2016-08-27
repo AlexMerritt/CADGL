@@ -42,23 +42,23 @@ function MainScene() {
 
     console.log('main scene constructor');
 
-    /*
-    var m = new ModelCylinder();
-    m.Create(10);
-    Database.DBUpdate('model/cylnd', m.GetData());
-    */
+    
+    // If I screw up the the model data
+    //var m = new ModelCylinder();
+    //m.Create(10);
+    //Database.DBUpdate('model/cylnd', m.GetData());
+    
     
     Database.DBGet('model/cylnd', function(data) {
         this.cylnd.CreateFromData(data);
         console.log("db get initialize model");
-        //this.cylnd.Create(4);
-        this.cylnd.SetPosition(-400, 0, 0);
-        console.log(this.cylnd);
+        this.cylnd.SetPosition(0, -100, 0);
         this.sceneObject.add(this.cylnd.GetMesh());
     }.bind(this));
 
     /*
 
+    // Loading and displaying .obj models
     Database.StorageGetUrl('Model/teapot.obj', function(url){
         this.teapot.LoadModel(url, function(){
             this.teapot.SetPosition(400, 0, 0);
@@ -97,12 +97,10 @@ MainScene.prototype.Update = function(){
         if(!this.modelSaved && Input.IsKeyPressed(KeyCode.P)){
             console.log("Save Model");
             this.modelSaved = true;
-var d = this.cylnd.GetData();
-            console.log(this.cylnd.levels.length);
+            //var d = this.cylnd.GetData();
             
             
-            Database.DBUpdate('model/cylnd', d);
-            console.log(this.cylnd.levels.length);
+            Database.DBUpdate('model/cylnd', this.cylnd.GetData());
         }
     }
 

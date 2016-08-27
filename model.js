@@ -1,23 +1,26 @@
-var NUM_DEGREE = 12;
+var NUM_DEGREE = 90;
 
 var vertSh = `
 varying vec3 vNormal;
+varying float depth;
 void main()
 {
     vNormal = (modelMatrix * vec4(normal, 0.0)).xyz;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    depth = 1.0 - gl_Position.z / 1000.0;
 }
 `;
 
 var fragSh = `
 varying vec3 vNormal;
+varying float depth;
 void main()
 {   
-    vec3 color = vec3(0.0, 1.0, 0.0);
+    vec3 color = vec3(0.2, 0.5, 1.0);
     vec3 light = normalize(vec3(0.5, 0.2, 1.0));
     
-    color = color * max(0.01, dot(light, vNormal));
-
+    //color = color * max(0.01, dot(light, vNormal));
+    color *= depth;//gl_FragCoord.z;// (gl_FragCoord.z * gl_FragCoord.z * gl_FragCoord.z);
     gl_FragColor = vec4(color, 1.0);
 }
 `;
@@ -172,10 +175,8 @@ ModelCylinder.prototype.UpdateMesh = function() {
 
 ModelCylinder.prototype.GetData = function(){
     var output = {};
-    console.log(output);
     var metaData = {};
     metaData['num_levels'] = this.levels.length;
-    console.log(this.levels.length);
 
     output['meta_data'] = metaData;
     output['data'] = {};
@@ -224,6 +225,4 @@ ModelCylinder.prototype.Widen = function(ammount, level) {
     }
 
     this.UpdateMesh();
-
-    console.log(this.levels.length);
 }
