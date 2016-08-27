@@ -31,35 +31,135 @@ function MainScene() {
     this.name = "Main Scene Object";
     this.camera = CreateCamera(16.0/9.0);
     this.camera.position.set(0, 0, 500);
-    console.log(this.camera);
     this.sceneObject = new THREE.Scene();
-    this.teapot = new Model();
-    this.person = new Model();
-    this.cylnd = new ModelCylinder();
+    this.model = new ModelCylinder();
     this.rotation = 0;
+    this.modelList;
+    this.activeModelName;
 
     this.modelSaved = false;
 
-    console.log('main scene constructor');
-
-    
-    // If I screw up the the model data
-    //var m = new ModelCylinder();
-    //m.Create(10);
-    //Database.DBUpdate('model/cylnd', m.GetData());
-    
-    
-    Database.DBGet('model/cylnd', function(data) {
-        this.cylnd.CreateFromData(data);
-        console.log("db get initialize model");
-        this.cylnd.SetPosition(0, -100, 0);
-        this.sceneObject.add(this.cylnd.GetMesh());
-    }.bind(this));
+    this.LoadGUI();
+    //this.LoadModel('cylnd');
 
     /*
+    // If I screw up the the model data
+    var m = new ModelCylinder();
+    m.Create(10);
+    Database.DBUpdate('model/cylnd02', m.GetData());
+    Database.DBAddNew('model_list', 'cylnd02');
+    */
+}
 
-    // Loading and displaying .obj models
-    Database.StorageGetUrl('Model/teapot.obj', function(url){
+MainScene.prototype.CreateNewModel = function() {
+    var callback = function(){
+        var name =  $("#model-name").val();
+
+        this.model = new ModelCylinder();
+        this.model.Create(10);
+        this.model.SetPosition(0,-100, 0);
+        this.activeModelName = name;
+        Database.DBUpdate('model/' + name, this.model.GetData());
+        Database.DBAddNew('model_list', name);
+
+        this.sceneObject.add(this.model.GetMesh());
+    }.bind(this);
+
+    // Move this whole thing to a dialog ui utility
+    var dia = $( "#name" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+            "Create": function() {
+                $( this ).dialog( "close" );
+                callback();
+
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+
+    //console.log(dia.dialog("close"));
+
+    //var name = prompt("Please enter a name for a new model");
+    //console.log(name);
+
+/*
+    
+    */
+    
+}
+
+MainScene.prototype.LoadModel = function(modelName){
+    // Make sure the scene is empty before trying to add a new model
+    this.ResetScene();
+
+    Database.DBGet(MODEL_PATH + modelName, function(data) {
+        this.model = new ModelCylinder();
+        this.model.CreateFromData(data);
+        console.log("db get initialize model");
+        this.model.SetPosition(0, -100, 0);
+        this.sceneObject.add(this.model.GetMesh());
+
+        this.activeModelName = modelName;
+    }.bind(this));
+}
+
+MainScene.prototype.LoadGUI = function(){
+    this.gui = new dat.GUI();
+    this.modelControls = {};
+    this.modelControls['Create New'] = function() {this.CreateNewModel()}.bind(this);
+    this.gui.add(this.modelControls, "Create New");
+
+    var models = Database.GetModelList(function(models) {
+        for(i in models){
+            var name = models[i];
+            this.modelControls[name] = function (modelName){
+                this.LoadModel(modelName);
+            }.bind(this, name);
+
+            this.gui.add(this.modelControls, name);
+        }
+    }.bind(this));
+}
+
+MainScene.prototype.Update = function(){
+    Input.Update();
+    this.rotation += 0.01;
+
+    // I need to fix this so updates only happen once the entire scene is loaded
+    if(this.model.IsLoaded()) {
+        //this.model.SetRotation(0, -this.rotation, 0);
+
+        if(Input.IsKeyPressed(KeyCode.A)){
+            this.model.Widen(10, 2);
+            this.modelSaved = false;
+        }
+        else if(Input.IsKeyPressed(KeyCode.D)){
+            this.model.Widen(-10, 2);
+            this.modelSaved = false;
+        }
+        if(!this.modelSaved && Input.IsKeyPressed(KeyCode.P)){
+            console.log("Save Model");
+            this.modelSaved = true;            
+            
+            Database.DBUpdate('model/' + this.activeModelName, this.model.GetData());
+        }
+    }
+}
+
+MainScene.prototype.ResetScene = function(){
+    this.sceneObject = new THREE.Scene();
+}
+
+
+/*
+// Example for loaded a .obj model from the db
+Database.StorageGetUrl('Model/teapot.obj', function(url){
         this.teapot.LoadModel(url, function(){
             this.teapot.SetPosition(400, 0, 0);
             this.teapot.SetScale(100, 100, 100);
@@ -75,42 +175,5 @@ function MainScene() {
             this.personLoaded = true;
         }.bind(this))
     }.bind(this));
-    */
-}
 
-MainScene.prototype.Update = function(){
-    Input.Update();
-    this.rotation += 0.01;
-
-
-    if(this.cylnd.IsLoaded()) {
-        //this.cylnd.SetRotation(0, -this.rotation, 0);
-
-        if(Input.IsKeyPressed(KeyCode.A)){
-            this.cylnd.Widen(10, 2);
-            this.modelSaved = false;
-        }
-        else if(Input.IsKeyPressed(KeyCode.D)){
-            this.cylnd.Widen(-10, 2);
-            this.modelSaved = false;
-        }
-        if(!this.modelSaved && Input.IsKeyPressed(KeyCode.P)){
-            console.log("Save Model");
-            this.modelSaved = true;
-            //var d = this.cylnd.GetData();
-            
-            
-            Database.DBUpdate('model/cylnd', this.cylnd.GetData());
-        }
-    }
-
-    if(this.person.IsLoaded()) {
-        this.person.SetRotation(0, this.rotation, 0);
-    }
-
-    if(this.teapot.IsLoaded()) {
-        this.teapot.SetRotation(0, -this.rotation, 0);
-    }
-
-    
-}
+*/

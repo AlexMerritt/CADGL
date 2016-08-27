@@ -1,3 +1,5 @@
+var MODEL_PATH = "model/";
+
 function Database(){
 
 }
@@ -132,5 +134,17 @@ FirebaseDB.prototype.StorageGetUrl = function(path, callback) {
                 console.log('unknown error');
                 break;
         }
+    });
+}
+
+FirebaseDB.prototype.GetModelList = function(callback){
+    this.DBGet('model_list', function(data){
+        var list = [];
+
+        for(i in data){
+            list.push(data[i]);
+        }
+        
+        callback(list);
     });
 }
