@@ -40,6 +40,10 @@ function MainScene() {
     this.modelSaved = false;
 
     this.LoadGUI();
+
+
+    this.CreateNewModel("Test");
+    //this.CreateNewModel();
     //this.LoadModel('cylnd');
 
     /*
@@ -51,30 +55,7 @@ function MainScene() {
     */
 }
 
-MainScene.prototype.CreateNewModel = function() {
-    var callback = function(){
-        this.ResetScene();
-        var name =  $("#model-name").val();
-
-        this.model = new ModelCylinder();
-        this.model.Create(10);
-        this.model.SetPosition(0,-100, 0);
-        this.activeModelName = name;
-        Database.DBUpdate('model/' + name, this.model.GetData());
-        Database.DBAddNew('model_list', name);
-
-        this.sceneObject.add(this.model.GetMesh());
-
-        this.modelControls[name] = function (modelName){
-            this.LoadModel(modelName);
-        }.bind(this, name);
-
-        this.gui.add(this.modelControls, name);
-
-
-    }.bind(this);
-
-    // Move this whole thing to a dialog ui utility
+MainScene.prototype.GetName = function(callback) {
     var dia = $( "#name" ).dialog({
         resizable: false,
         height: "auto",
@@ -83,7 +64,7 @@ MainScene.prototype.CreateNewModel = function() {
         buttons: {
             "Create": function() {
                 $( this ).dialog( "close" );
-                callback();
+                callback($("#model-name"));
 
             },
             Cancel: function() {
@@ -91,16 +72,27 @@ MainScene.prototype.CreateNewModel = function() {
             }
         }
     });
+}
 
-    //console.log(dia.dialog("close"));
+MainScene.prototype.CreateNewModel = function(name) {
 
-    //var name = prompt("Please enter a name for a new model");
-    //console.log(name);
+    this.ResetScene();
 
-/*
-    
-    */
-    
+    this.model = new ModelCylinder();
+    this.model.Create(4);
+    this.model.SetPosition(0,-100, 0);
+    this.activeModelName = name;
+
+    //Database.DBUpdate('model/' + name, this.model.GetData());
+    //Database.DBAddNew('model_list', name);
+
+    this.sceneObject.add(this.model.GetMesh());
+
+    this.modelControls[name] = function (modelName){
+        this.LoadModel(modelName);
+    }.bind(this, name);
+
+    this.gui.add(this.modelControls, name);
 }
 
 MainScene.prototype.LoadModel = function(modelName){
@@ -121,7 +113,7 @@ MainScene.prototype.LoadModel = function(modelName){
 MainScene.prototype.LoadGUI = function(){
     this.gui = new dat.GUI();
     this.modelControls = {};
-    this.modelControls['Create New'] = function() {this.CreateNewModel()}.bind(this);
+    this.modelControls['Create New'] = function() {this.GetName( function() {this.CreateNewModel}.bind(this))}.bind(this);
     this.gui.add(this.modelControls, "Create New");
 
     var models = Database.GetModelList(function(models) {
@@ -142,7 +134,7 @@ MainScene.prototype.Update = function(){
 
     // I need to fix this so updates only happen once the entire scene is loaded
     if(this.model.IsLoaded()) {
-        //this.model.SetRotation(0, -this.rotation, 0);
+        this.model.SetRotation(0, -this.rotation, 0);
 
         if(Input.IsKeyPressed(KeyCode.A)){
             this.model.Widen(10, 2);

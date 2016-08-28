@@ -1,4 +1,6 @@
-var NUM_DEGREE = 90;
+var NUM_DEGREE = 12;
+var tao = Math.PI * 2.0;
+var levelHeight = 10;
 
 var vertSh = `
 varying vec3 vNormal;
@@ -29,6 +31,26 @@ void main()
 function Level() {
     this.radus = new Array(NUM_DEGREE);
 }
+
+function CylPoint() {
+    this.Angle = 0.0;
+    this.Level = -1;
+    this.Radius = 0.0;
+}
+
+CylPoint.prototype.Radius;
+CylPoint.prototype.Level;
+CylPoint.prototype.Angle;
+
+function Point() {
+    this.X = 0;
+    this.Y = 0;
+    this.Z = 0;
+}
+
+Point.prototype.X;
+Point.prototype.Y;
+Point.prototype.Z;
 
 // Class Model
 function ModelAbs(){
@@ -118,43 +140,28 @@ ModelCylinder.prototype.Geometry = function(){
     var g = new THREE.Geometry();
     g.dynamic = true;
 
-    var levelHeight = 10;
-    var tao = Math.PI * 2.0;
-
-    for(var i = 0; i < this.levels.length; i++) {
+    for(var i = 0; i < this.levels.length - 1; i++) {
 
         var level = this.levels[i];
 
         for(var j = 0; j < NUM_DEGREE; j++) {
-            var rad = level.radus[j];
-
-            var percent = j / NUM_DEGREE;
-            var angle = percent * tao;
-
-            var xang = Math.cos(angle) * rad;
-            var zang = Math.sin(angle) * rad;
-
-            var y = i * levelHeight;
-            var size = 2.5;
-            var index = (i * NUM_DEGREE + j) * 4;
-
-            var xn = xang - size;
-            var xp = xang + size;
-            var zn = zang - size;
-            var zp = zang + size;
-
-
-            var yn = y -  levelHeight / 2.0;
-            var yp = y + levelHeight / 2.0;
-
-            
+            // cpcl : current point current level
+            // cpnl : current point next level
+            // npcl : next point current level
+            // npnl : next pont next level
+            var cpcl = this.GetPoint(this.GetCylPoint(j, i));
+            var cpnl = this.GetPoint(this.GetCylPoint(j, i + 1));
+            var npcl = this.GetPoint(this.GetCylPoint((j + 1) % NUM_DEGREE, i));
+            var npnl = this.GetPoint(this.GetCylPoint((j + 1) % NUM_DEGREE, i + 1));
 
             // Add the verts
-            g.vertices.push(new THREE.Vector3(xn, yn, zang));
-            g.vertices.push(new THREE.Vector3(xn, yp, zang));
-            g.vertices.push(new THREE.Vector3(xp, yn, zang));
-            g.vertices.push(new THREE.Vector3(xp, yp, zang));
-
+            g.vertices.push(new THREE.Vector3(npcl.X, npcl.Y, npcl.Z));
+            g.vertices.push(new THREE.Vector3(npnl.X, npnl.Y, npnl.Z));
+            g.vertices.push(new THREE.Vector3(cpcl.X, cpcl.Y, cpcl.Z));
+            g.vertices.push(new THREE.Vector3(cpnl.X, cpnl.Y, cpnl.Z));
+            
+            
+            var index = (i * NUM_DEGREE + j) * 4;
             // Create the faces
             g.faces.push(new THREE.Face3(index + 1, index, index + 2));
             g.faces.push( new THREE.Face3(index + 1, index + 2, index + 3));
@@ -225,4 +232,40 @@ ModelCylinder.prototype.Widen = function(ammount, level) {
     }
 
     this.UpdateMesh();
+}
+
+ModelCylinder.prototype.GetCylPoint = function(x, y){
+    var output = new CylPoint();
+
+    var level = this.levels[y];
+    var radius = level.radus[x];
+
+    var angle = tao * (x / NUM_DEGREE);
+
+    /*
+    var currentRad = level.radus[currentIndex];
+
+    var currentPercent = currentIndex / NUM_DEGREE;
+
+    var currentAngle = currentPercent * tao;
+
+    var currentX = Math.cos(currentAngle) * currentRad;
+    */
+
+    output.Angle =  angle;
+    output.Level = y;
+    output.Radius = radius;
+
+    return output;
+}
+
+ModelCylinder.prototype.GetPoint = function(cylPoint) {
+    var output = new Point();
+
+    output.X = Math.cos(cylPoint.Angle) * cylPoint.Radius;
+    output.Z = Math.sin(cylPoint.Angle) * cylPoint.Radius;
+
+    output.Y = cylPoint.Level * levelHeight;
+
+    return output;
 }
