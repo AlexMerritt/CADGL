@@ -29,7 +29,7 @@ void main()
 
 // Struct Level
 function Level() {
-    this.radus = new Array(NUM_DEGREE);
+    this.radius = new Array(NUM_DEGREE);
 }
 
 function CylPoint() {
@@ -124,12 +124,12 @@ ModelCylinder.prototype.Create = function(numLevels) {
         var l = new Level();
 
         for(var j = 0; j < NUM_DEGREE; j++) {
-            l.radus[j] =  50;
+            l.radius[j] =  50;
             //l.radus[j] = Math.random() * 25 + 75;
         }
 
         this.levels.push(l);
-        console.log(l.radus);
+        console.log(l.radius);
     }
 
     this.BuildMesh();
@@ -191,7 +191,7 @@ ModelCylinder.prototype.GetData = function(){
     for(var i = 0; i < this.levels.length; i++) {
         var l = {};
         l['num_values'] = NUM_DEGREE;
-        l['values'] = this.levels[i].radus; // I am doing it this vay because I was getting incosistant results when saving as a string array
+        l['values'] = this.levels[i].radius; // I am doing it this vay because I was getting incosistant results when saving as a string array
         output['data'][i] = l;
     }
 
@@ -217,7 +217,7 @@ ModelCylinder.prototype.CreateFromData = function(data) {
         }
 
         var l = new Level();
-        l.radus = arr.slice();
+        l.radius = arr.slice();
 
         this.levels.push(l);
     }
@@ -226,9 +226,17 @@ ModelCylinder.prototype.CreateFromData = function(data) {
     this.loaded = true;
 }
 
-ModelCylinder.prototype.Widen = function(ammount, level) {
+ModelCylinder.prototype.Widen = function(amount, level) {
     for(var i = 0; i < NUM_DEGREE; i++){
-        this.levels[level].radus[i] += ammount; 
+        this.levels[level].radius[i] += amount; 
+    }
+
+    this.UpdateMesh();
+}
+
+ModelCylinder.prototype.Extrude = function(amount, radius){
+    for(i in this.levels){
+        this.levels[i].radius[radius] += amount;
     }
 
     this.UpdateMesh();
@@ -238,7 +246,7 @@ ModelCylinder.prototype.GetCylPoint = function(x, y){
     var output = new CylPoint();
 
     var level = this.levels[y];
-    var radius = level.radus[x];
+    var radius = level.radius[x];
 
     var angle = tao * (x / NUM_DEGREE);
 

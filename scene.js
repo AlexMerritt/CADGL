@@ -42,7 +42,7 @@ function MainScene() {
     this.LoadGUI();
 
 
-    this.CreateNewModel("Test");
+    //this.CreateNewModel("Test");
     //this.CreateNewModel();
     //this.LoadModel('cylnd');
 
@@ -79,12 +79,12 @@ MainScene.prototype.CreateNewModel = function(name) {
     this.ResetScene();
 
     this.model = new ModelCylinder();
-    this.model.Create(4);
+    this.model.Create(10);
     this.model.SetPosition(0,-100, 0);
     this.activeModelName = name;
 
-    //Database.DBUpdate('model/' + name, this.model.GetData());
-    //Database.DBAddNew('model_list', name);
+    Database.DBUpdate('model/' + name, this.model.GetData());
+    Database.DBAddNew('model_list', name);
 
     this.sceneObject.add(this.model.GetMesh());
 
@@ -144,6 +144,16 @@ MainScene.prototype.Update = function(){
             this.model.Widen(-10, 2);
             this.modelSaved = false;
         }
+
+        if(Input.IsKeyPressed(KeyCode.W)){
+            this.model.Extrude(2, 8);
+            this.modelSaved = false;
+        }
+        else if(Input.IsKeyPressed(KeyCode.S)){
+            this.model.Extrude(-2, 8);
+            this.modelSaved = false;
+        }
+
         if(!this.modelSaved && Input.IsKeyPressed(KeyCode.P)){
             console.log("Save Model");
             this.modelSaved = true;            
