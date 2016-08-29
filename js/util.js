@@ -179,24 +179,31 @@ function Input(){
 }
 
 
-function CreateMesh(geometry, vertexShader, fragmentShader, uniforms){
-    var material = CreateMaterial(vertexShader, fragmentShader);
-        
-    var m = new THREE.Mesh(geometry, material);
+function CreateMesh(geometry, vertexShader, fragmentShader, fragmentBackShader){
+    var material = CreateMaterial(vertexShader, fragmentShader, fragmentBackShader);
+    //var m = new THREE.Mesh(geometry, material);
+    var m = new THREE.SceneUtils.createMultiMaterialObject(geometry, material);
     
     return m;
 };
 
-function CreateMaterial(vertexShader, fragmentShader){
-    var material = new THREE.ShaderMaterial({
+function CreateMaterial(vertexShader, fragmentShader, fragmentBackShader){
+    var matFront = new THREE.ShaderMaterial({
         //uniforms: uniforms,
         vertexShader: vertexShader,
         fragmentShader: fragmentShader
     });
-    console.log(material);
-    material.side = THREE.DoubleSide;
+    console.log(matFront);
+    matFront.side = THREE.FrontSide;
 
-    return material;
+    var matBack = new THREE.ShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentBackShader
+    });
+
+    matBack.side = THREE.BackSide;
+
+    return [matFront, matBack];
 }
 
 function CreateCamera(aspectRatio) {

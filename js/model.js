@@ -15,14 +15,24 @@ void main()
 
 var fragSh = `
 varying vec3 vNormal;
-varying float depth;
 void main()
 {   
-    vec3 color = vec3(0.2, 0.5, 1.0);
+    vec3 color = vec3(1.2, 0.9, 0.0);
     vec3 light = normalize(vec3(0.5, 0.2, 1.0));
     
     color = color * max(0.01, dot(light, vNormal));
-    //color *= depth;//gl_FragCoord.z;// (gl_FragCoord.z * gl_FragCoord.z * gl_FragCoord.z);
+    gl_FragColor = vec4(color, 1.0);
+}
+`;
+
+var fragBackSh = `
+varying vec3 vNormal;
+void main()
+{   
+    vec3 color = vec3(0.0, 0.7, 0.0);
+    vec3 light = normalize(vec3(0.5, 0.2, 1.0));
+    
+    color = color * max(0.01, -1.0 * dot(light, vNormal));
     gl_FragColor = vec4(color, 1.0);
 }
 `;
@@ -175,7 +185,7 @@ ModelCylinder.prototype.Geometry = function(){
 }
 
 ModelCylinder.prototype.BuildMesh = function(){
-    this.mesh = CreateMesh(this.Geometry(), vertSh, fragSh);
+    this.mesh = CreateMesh(this.Geometry(), vertSh, fragSh, fragBackSh);
 }
 
 ModelCylinder.prototype.UpdateMesh = function() {
