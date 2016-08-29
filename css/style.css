@@ -1,0 +1,21 @@
+#scene-gui{
+    position : relative;
+    top: 2em;
+}
+
+#mod-gui{
+    position : relative;
+    top: 2em;
+}
+
+
+
+.row {
+    display: table;
+}
+
+.row [class*="col-"] {
+    float: none;
+    display: table-cell;
+    vertical-align: top;
+}

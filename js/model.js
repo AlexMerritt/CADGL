@@ -1,4 +1,4 @@
-var NUM_DEGREE = 12;
+var NUM_DEGREE = 360;
 var tao = Math.PI * 2.0;
 var levelHeight = 10;
 
@@ -21,8 +21,8 @@ void main()
     vec3 color = vec3(0.2, 0.5, 1.0);
     vec3 light = normalize(vec3(0.5, 0.2, 1.0));
     
-    //color = color * max(0.01, dot(light, vNormal));
-    color *= depth;//gl_FragCoord.z;// (gl_FragCoord.z * gl_FragCoord.z * gl_FragCoord.z);
+    color = color * max(0.01, dot(light, vNormal));
+    //color *= depth;//gl_FragCoord.z;// (gl_FragCoord.z * gl_FragCoord.z * gl_FragCoord.z);
     gl_FragColor = vec4(color, 1.0);
 }
 `;
@@ -125,7 +125,7 @@ ModelCylinder.prototype.Create = function(numLevels) {
 
         for(var j = 0; j < NUM_DEGREE; j++) {
             l.radius[j] =  50;
-            //l.radus[j] = Math.random() * 25 + 75;
+            //l.radius[j] = Math.random() * 25 + 75;
         }
 
         this.levels.push(l);
@@ -149,10 +149,11 @@ ModelCylinder.prototype.Geometry = function(){
             // cpnl : current point next level
             // npcl : next point current level
             // npnl : next pont next level
+            var nextIndex = (j + 1) % NUM_DEGREE;
             var cpcl = this.GetPoint(this.GetCylPoint(j, i));
             var cpnl = this.GetPoint(this.GetCylPoint(j, i + 1));
-            var npcl = this.GetPoint(this.GetCylPoint((j + 1) % NUM_DEGREE, i));
-            var npnl = this.GetPoint(this.GetCylPoint((j + 1) % NUM_DEGREE, i + 1));
+            var npcl = this.GetPoint(this.GetCylPoint(nextIndex, i));
+            var npnl = this.GetPoint(this.GetCylPoint(nextIndex, i + 1));
 
             // Add the verts
             g.vertices.push(new THREE.Vector3(npcl.X, npcl.Y, npcl.Z));
@@ -168,16 +169,20 @@ ModelCylinder.prototype.Geometry = function(){
         }
     }
 
+    g.computeFaceNormals();
+
     return g;
 }
 
 ModelCylinder.prototype.BuildMesh = function(){
     this.mesh = CreateMesh(this.Geometry(), vertSh, fragSh);
+    console.log(this.mesh);
 }
 
 ModelCylinder.prototype.UpdateMesh = function() {
     this.mesh.geometry = this.Geometry();
     this.mesh.geometry.verticiesNeedUpdate = true;
+    
 }
 
 ModelCylinder.prototype.GetData = function(){
@@ -235,8 +240,17 @@ ModelCylinder.prototype.Widen = function(amount, level) {
 }
 
 ModelCylinder.prototype.Extrude = function(amount, radius){
+    // modify all radius that are +- 5 away
+    var strength = 5;
+
     for(i in this.levels){
-        this.levels[i].radius[radius] += amount;
+        for(var j = radius - strength; j <= radius + strength; j++){
+            var radIndex = (radius + (j + NUM_DEGREE)) % NUM_DEGREE;
+            
+            var dist = (strength - Math.sqrt((radius - j) * (radius - j))) / strength;
+            dist *= dist;
+            this.levels[i].radius[radIndex] += amount * dist;
+        }
     }
 
     this.UpdateMesh();
@@ -248,17 +262,8 @@ ModelCylinder.prototype.GetCylPoint = function(x, y){
     var level = this.levels[y];
     var radius = level.radius[x];
 
+    // Angle in rads
     var angle = tao * (x / NUM_DEGREE);
-
-    /*
-    var currentRad = level.radus[currentIndex];
-
-    var currentPercent = currentIndex / NUM_DEGREE;
-
-    var currentAngle = currentPercent * tao;
-
-    var currentX = Math.cos(currentAngle) * currentRad;
-    */
 
     output.Angle =  angle;
     output.Level = y;

@@ -207,3 +207,19 @@ function CreateCamera(aspectRatio) {
     
     return camera;
 };
+
+dat.GUI.prototype.removeAllFolders = function() {
+    console.log("removing all folders");
+    for(i in this.__folders){
+        this.__folders[i].close(); 
+        this.__folders[i].domElement.parentNode.parentNode.removeChild(this.__folders[i].domElement.parentNode); 
+        this.__folders[i] = undefined; this.onResize();
+    } 
+}
+
+dat.GUI.prototype.removeFolder = function(name) {
+    this.__folders[name].close(); 
+    this.__folders[name].domElement.parentNode.parentNode.removeChild(this.__folders[name].domElement.parentNode); 
+    this.__folders[name] = undefined;
+    this.onResize();
+}

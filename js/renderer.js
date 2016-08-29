@@ -3,7 +3,7 @@ function Renderer() {
     this.context = new THREE.WebGLRenderer();
     this.SetWindowSize(1280, 720);
 
-    $('#render_window').append(this.context.domElement);
+    $('#render-window').append(this.context.domElement);
 }
 
 Renderer.prototype.SetWindowSize = function(width, height){

@@ -6,7 +6,8 @@
     <title>THREE.js HTML App</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
-    
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
     
@@ -17,43 +18,74 @@
 
     <script src="lib/firebase.js"></script>
 
-    <script src="database.js"></script>
-    <script src="util.js"></script>
-    <script src="model.js"></script>
-    <script src="scene.js"></script>
-    <script src="renderer.js"></script>
-    <script src="system.js"></script>
-    <script src="app.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/model.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/system.js"></script>
+    <script src="js/app.js"></script>
     
     
 </head>
 <body>
-    <div id="content">
-        <div id="render_window"></div>
-        <div>
-            <p>
-                Controls
-                <br>
-                <br>
-                Widen Model
-                <br>
-                A: increase width
-                <br>
-                S: decrease width
-
-                <br>
-                <br>
-                Save
-                <br>
-                P: sync model to the db
-            </p>
-        </div>
-            <div id="name" style="display:none;">
-                <form>
-                    <label for="model-name">Please enter a name</label>
-                    <input type="text" name="model-name" id="model-name">
-                </form>
+    <div class="wrapper">
+        <div id="content">
+            <div class="row">
+                <div id="mod-gui" class="col-md-1"></div>
+                <div id="render-window" class="col-md-6"></div>
+                <div id="scene-gui" class="col-md-1"></div>
             </div>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <p>
+                        To the right is a list of mods available on the active models. They will be loaded when a new shape is created or loaded
+                        <br>
+                        <br>
+                        <b>Widen</b>
+                        <br>
+                        Widen the model by a constant value the selected level. Click and drag in the Level box or click the number and type in a value to set the select level.
+                        <br>
+                        <br>
+                        <b>Extrude</b>
+                        <br>
+                        Extrude the model by a constant value at the select raduis. Click and drag in the Radius box or click the number and type in a value to set the select radius.
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <p>
+                        To the left is the UI for managing the models.
+                        <br>
+                        <br>
+                        <br>
+                        <b>Load Model</b>
+                        <br>
+                        A list is populated with all current models available to work on that are stored in the database. Click a model name to load it in the scene.
+                        <br>
+                        <br>
+                        <b>Create Model</b>
+                        <br>
+                        Create a new model and saves it to the database. Click and fillout a name and new model will be created.
+                        <br>
+                        <br>
+                        <b>Save Model</b>
+                        <br>
+                        Click to save and pushes all of the changes on the active model to the database.
+
+                    </p>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dialogs for getting user input -->
+    <div id="name" style="display:none;">
+        <form>
+            <label for="model-name">Please enter a name</label>
+            <input type="text" name="model-name" id="model-name">
+        </form>
     </div>
 </body>
 </html>
