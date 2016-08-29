@@ -187,6 +187,9 @@ function CreateMesh(geometry, vertexShader, fragmentShader, uniforms){
         });
         
     var m = new THREE.Mesh(geometry, material);
+    m.doubleSided = true;
+
+    console.log(m);
     
     return m;
 };

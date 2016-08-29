@@ -1,3 +1,4 @@
+// Need to move this to the system can and get the input from there
 var Input = new Input();
 Input.Init();
 
@@ -34,6 +35,8 @@ function MainScene() {
     this.sceneObject = new THREE.Scene();
     this.model = new ModelCylinder();
     this.rotation = 0;
+    this.modelRotX = 0;
+    this.modelRotY = 0;
     this.modelList;
     this.activeModelName;
 
@@ -171,16 +174,18 @@ MainScene.prototype.Update = function(){
 
     // I need to fix this so updates only happen once the entire scene is loaded
     if(this.model.IsLoaded()) {
-        this.model.SetRotation(0, -this.rotation, 0);
+        // Only try and rotate the camera if the mouse is clicked
+        
+        if (Input.IsMouseDown()) {
+            var rot = Input.GetMouseDelta();
 
-        if(Input.IsKeyPressed(KeyCode.W)){
-            this.model.Extrude(2, 8);
-            this.modelSaved = false;
+            this.modelRotX += rot[0] / 50;
+            this.modelRotY += rot[1] / 50;
+
+            this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
         }
-        else if(Input.IsKeyPressed(KeyCode.S)){
-            this.model.Extrude(-2, 8);
-            this.modelSaved = false;
-        }
+
+        
     }
 }
 
