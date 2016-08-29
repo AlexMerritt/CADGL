@@ -114,12 +114,7 @@ MainScene.prototype.LoadModelLoadGUI = function() {
 }
 
 MainScene.prototype.LoadModelModsGUI = function(){
-    console.log(this.modsGUI);
     this.modsGUI.removeAllFolders();
-    console.log(this.modsGUI);
-
-    console.log(this.model.levels.length);
-    console.log(NUM_DEGREE);
 
     // Need to change the mod gui can be created from mod classes
     // Width mod gui

@@ -176,7 +176,6 @@ ModelCylinder.prototype.Geometry = function(){
 
 ModelCylinder.prototype.BuildMesh = function(){
     this.mesh = CreateMesh(this.Geometry(), vertSh, fragSh);
-    console.log(this.mesh);
 }
 
 ModelCylinder.prototype.UpdateMesh = function() {

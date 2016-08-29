@@ -180,28 +180,23 @@ function Input(){
 
 
 function CreateMesh(geometry, vertexShader, fragmentShader, uniforms){
-    var material = new THREE.ShaderMaterial({
-            //uniforms: uniforms,
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader
-        });
+    var material = CreateMaterial(vertexShader, fragmentShader);
         
     var m = new THREE.Mesh(geometry, material);
-    m.doubleSided = true;
-
-    console.log(m);
     
     return m;
 };
 
 function CreateMaterial(vertexShader, fragmentShader){
     var material = new THREE.ShaderMaterial({
-            //uniforms: uniforms,
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader
-        });
+        //uniforms: uniforms,
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader
+    });
+    console.log(material);
+    material.side = THREE.DoubleSide;
 
-        return material;
+    return material;
 }
 
 function CreateCamera(aspectRatio) {
