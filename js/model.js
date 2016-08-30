@@ -189,8 +189,11 @@ ModelCylinder.prototype.BuildMesh = function(){
 }
 
 ModelCylinder.prototype.UpdateMesh = function() {
-    this.mesh.geometry = this.Geometry();
-    this.mesh.geometry.verticiesNeedUpdate = true;
+    // All chlidren's meshes need to be updated
+    for(i in this.mesh.children){
+        this.mesh.children[i].geometry = this.Geometry();
+        this.mesh.children[i].verticiesNeedUpdate = true;
+    }
     
 }
 
@@ -241,6 +244,7 @@ ModelCylinder.prototype.CreateFromData = function(data) {
 }
 
 ModelCylinder.prototype.Widen = function(amount, level) {
+    console.log("model widen");
     for(var i = 0; i < NUM_DEGREE; i++){
         this.levels[level].radius[i] += amount; 
     }

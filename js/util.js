@@ -181,7 +181,6 @@ function Input(){
 
 function CreateMesh(geometry, vertexShader, fragmentShader, fragmentBackShader){
     var material = CreateMaterial(vertexShader, fragmentShader, fragmentBackShader);
-    //var m = new THREE.Mesh(geometry, material);
     var m = new THREE.SceneUtils.createMultiMaterialObject(geometry, material);
     
     return m;
@@ -193,7 +192,6 @@ function CreateMaterial(vertexShader, fragmentShader, fragmentBackShader){
         vertexShader: vertexShader,
         fragmentShader: fragmentShader
     });
-    console.log(matFront);
     matFront.side = THREE.FrontSide;
 
     var matBack = new THREE.ShaderMaterial({
