@@ -1,6 +1,6 @@
 var NUM_DEGREE = 360;
 var tao = Math.PI * 2.0;
-var levelHeight = 10;
+var levelHeight = 1;
 
 var vertSh = `
 varying vec3 vNormal;
@@ -43,7 +43,7 @@ function Level() {
 }
 
 function CylPoint() {
-    this.Angle = 0.0;
+    this.Angle = 0;
     this.Level = -1;
     this.Radius = 0.0;
 }
@@ -269,6 +269,31 @@ ModelCylinder.prototype.Extrude = function(amount, radius){
     this.UpdateMesh();
 }
 
+ModelCylinder.prototype.Carve = function(amount, level, radius) {
+    var strength = 10;
+    var radDist = strength;
+    var levelDist = strength;
+    var numLevels = this.levels.length;
+    for(var i = -levelDist; i <= levelDist; i++){
+        for(var j = -radDist; j <= radDist; j++){
+            var curLvDist = i / levelDist;
+            var curRdDist = j / radDist;
+            var dist = Math.sqrt((curLvDist * curLvDist) + (curRdDist * curRdDist));
+
+            if(dist <= 1.0001) {
+                var levelIndex = Math.min(Math.max(0, i + level), numLevels);
+                var radIndex =   (radius + (j + NUM_DEGREE)) % NUM_DEGREE;
+                //var radIndex = j + radius;
+                //console.log(radIndex);
+
+                this.levels[levelIndex].radius[radIndex] = amount;
+            }
+        }
+    }
+
+    this.UpdateMesh();
+}
+
 ModelCylinder.prototype.GetCylPoint = function(x, y){
     var output = new CylPoint();
 
@@ -295,3 +320,10 @@ ModelCylinder.prototype.GetPoint = function(cylPoint) {
 
     return output;
 }
+
+ModelCylinder.prototype.FaceIndexToModelPoint = function(faceIndex){
+    var output = new CylPoint();
+    output.Level = Math.floor((faceIndex / 2) / NUM_DEGREE);
+    output.Angle = Math.floor((faceIndex/2) % NUM_DEGREE);
+    return output;
+} 

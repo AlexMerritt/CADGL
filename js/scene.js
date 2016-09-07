@@ -39,13 +39,14 @@ function MainScene() {
     this.modelRotY = 0;
     this.modelList;
     this.activeModelName;
+    this.carving = false;
 
     this.modelSaved = false;
 
     this.LoadGUI();
 
     //this.CreateNewModel("Test");
-    //this.LoadModel('Cylnd');
+    this.LoadModel('large2');
 }
 
 // This probably should be moved to a ui module or something similar
@@ -161,6 +162,21 @@ MainScene.prototype.LoadModelModsGUI = function(){
     // NUM_DEGREE should be taken off the model when loaded instead of using the const
     this.extrudeGUI.add(this.extrudeModeCtrls, 'ExtrudeRadius', 0, NUM_DEGREE).step(1).name('Radius');
 
+    // Index gui
+    this.carveModeCtrls = {};
+
+    this.carveGUI = this.modsGUI.addFolder('Carve');
+    this.carveModeCtrls['ToggleCarve'] = function() {
+        this.carving = !this.carving;
+        if(this.carving){
+            $('#model-info').text('Carving');
+        }
+        else{
+            $('#model-info').text('Rotating');
+        }
+    }.bind(this);
+
+    this.carveGUI.add(this.carveModeCtrls, 'ToggleCarve').name('Toggle');
 }
 
 MainScene.prototype.Update = function(){
@@ -172,15 +188,24 @@ MainScene.prototype.Update = function(){
         // Only try and rotate the camera if the mouse is clicked
         
         if (Input.IsMouseDown()) {
-            var rot = Input.GetMouseDelta();
+            // This is terrible but it will toggle if the user is using the carve mod
+            // or trying to rotate the model
+            if(this.carving){
+                // Get Mouse Position on model
+                var point = this.GetPointFromMouse();
+                if(point != null){
+                    this.model.Carve(49, point.Level, point.Angle);
+                }
+            }
+            else{
+                var rot = Input.GetMouseDelta();
 
-            this.modelRotX += rot[0] / 50;
-            this.modelRotY += rot[1] / 50;
+                this.modelRotX += rot[0] / 50;
+                this.modelRotY += rot[1] / 50;
 
-            this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
+                this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
+            }
         }
-
-        
     }
 }
 
@@ -203,7 +228,7 @@ MainScene.prototype.CreateNewModel = function(name) {
     this.ResetScene();
 
     this.model = new ModelCylinder();
-    this.model.Create(10);
+    this.model.Create(80);
     this.model.SetPosition(0,-50, 300);
     this.activeModelName = name;
 
@@ -235,10 +260,9 @@ MainScene.prototype.LoadModel = function(modelName){
 
         this.activeModelName = modelName;
 
-        this.LoadModelModsGUI();
-    }.bind(this));
+        this.LoadModelModsGUI();        
 
-    
+    }.bind(this));    
 }
 
 MainScene.prototype.SaveModel = function(){
@@ -249,6 +273,33 @@ MainScene.prototype.SaveModel = function(){
 
 MainScene.prototype.ModelExists = function(name){
     return false;
+}
+
+MainScene.prototype.GetModelIntersection = function(vec) {
+    var raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(vec, this.camera);
+    var intersects = raycaster.intersectObject(this.model.GetMesh().children[0]);
+    return intersects;
+}
+
+MainScene.prototype.GetPointFromVector = function(vector) {
+    var intersect = this.GetModelIntersection(vector);
+
+    if(intersect.length > 0)
+        return this.model.FaceIndexToModelPoint(intersect[0].faceIndex);
+    else{
+        return null;
+    }
+}
+
+MainScene.prototype.GetPointFromMouse = function() { 
+    var mouse = Input.GetMouseState();
+
+    var offset = $('#render-window').offset();
+
+    var vector = new THREE.Vector3(((mouse.x - offset.left) / 1280) * 2 - 1, -((mouse.y - offset.top) / 720) * 2 + 1, 1);
+
+    return this.GetPointFromVector(vector);
 }
 
 
