@@ -108,6 +108,34 @@ Model.prototype.LoadModel = function(filename, callback){
 
         var material = CreateMaterial(vertSh, fragSh);
 
+        
+
+        model.traverse(function(child){
+            if(child instanceof THREE.Mesh){
+                child.material = material;
+            }
+        });
+
+        this.mesh = model;
+        this.loaded = true;
+
+        callback();
+    }.bind(this));
+}
+
+Model.prototype.LoadModelFromData = function(data, callback){
+    var manager = new THREE.LoadingManager();
+    manager.onProgress = function ( item, loaded, total ) {
+
+        console.log( item, loaded, total );
+
+    };
+
+    var loader = new THREE.OBJLoader(manager);
+    loader.loadFromData(data, function(model){
+
+        var material = CreateMaterial(vertSh, fragSh);
+
         model.traverse(function(child){
             if(child instanceof THREE.Mesh){
                 child.material = material;

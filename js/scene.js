@@ -40,13 +40,14 @@ function MainScene() {
     this.modelList;
     this.activeModelName;
     this.carving = false;
+    this.cube = new Model();
 
     this.modelSaved = false;
 
     this.LoadGUI();
 
     //this.CreateNewModel("Test");
-    this.LoadModel('large2');
+    //this.LoadModel('large2');
 }
 
 // This probably should be moved to a ui module or something similar
@@ -71,6 +72,18 @@ MainScene.prototype.GetName = function(callback) {
     });
 }
 
+MainScene.prototype.GetFileName = function(e) {
+    GetFileContents(e.target.files[0], function(fileContents){
+
+        this.cube.LoadModelFromData(fileContents, function(){
+            console.log(this.cube.GetMesh());
+            this.sceneObject.add(this.cube.GetMesh());
+            this.cube.SetScale(100, 100, 100);
+            this.cubeLoaded = true;
+        }.bind(this));
+    }.bind(this));
+}
+
 MainScene.prototype.LoadGUI = function(){
     this.LoadModelLoadGUI();
     //this.LoadModelModsGUI();
@@ -88,6 +101,7 @@ MainScene.prototype.LoadModelLoadGUI = function() {
     this.modelLoadGUI = this.gui.addFolder("Load Model");
     this.modelCreateGUI = this.gui.addFolder("Create Model");
     this.modelSaveGUI = this.gui.addFolder("Save Model");
+    this.modelUploadGUI = this.gui.addFolder("Upload Model");
 
     // Add the gui for creating new models
     this.modelLoadControls = {};
@@ -112,6 +126,14 @@ MainScene.prototype.LoadModelLoadGUI = function() {
             this.modelLoadGUI.add(this.modelLoadControls, name);
         }
     }.bind(this));
+
+    document.getElementById("file-browser").addEventListener('change', this.GetFileName.bind(this), false);
+    //$("#file-browser").bind("change", function(e){console.log(e);}, false);
+    this.modelLoadControls['Upload'] = function() {
+        $("#file-browser").click();
+    }.bind(this);
+
+    this.modelUploadGUI.add(this.modelLoadControls, "Upload");
 }
 
 MainScene.prototype.LoadModelModsGUI = function(){
@@ -297,11 +319,11 @@ MainScene.prototype.GetPointFromMouse = function() {
 
     var offset = $('#render-window').offset();
 
+    // These numbers need to be standardized in the application
     var vector = new THREE.Vector3(((mouse.x - offset.left) / 1280) * 2 - 1, -((mouse.y - offset.top) / 720) * 2 + 1, 1);
 
     return this.GetPointFromVector(vector);
 }
-
 
 /*
 // Example for loaded a .obj model from the db
