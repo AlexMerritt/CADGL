@@ -30,10 +30,10 @@ MainScene.prototype.constructor = MainScene;
 
 function MainScene() {
     this.name = "Main Scene Object";
-    this.camera = CreateCamera(16.0/9.0);
+    //this.camera = CreateCamera(16.0/9.0);
 
     //funny stuff is hapening with the ortho camera
-    //this.camera = CreateOrtho(1280, 720);
+    this.camera = CreateOrtho(WINDOW_WIDTH, WINDOW_HEIGHT);
     this.camera.position.set(0, 0, 700);
     this.sceneObject = new THREE.Scene();
     this.model = new Model();

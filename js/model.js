@@ -180,7 +180,7 @@ ModelCylinder.prototype.Create = function(numLevels) {
         var l = new Level();
 
         for(var j = 0; j < NUM_DEGREE; j++) {
-            l.radius[j] =  50;
+            l.radius[j] =  50 + (Math.sin((i * 8) / numLevels) * 10);
             //l.radius[j] = Math.random() * 25 + 75;
         }
 
