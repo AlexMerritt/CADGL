@@ -16,11 +16,18 @@ void main()
 var fragSh = `
 varying vec3 vNormal;
 void main()
-{   
+{
+    float minIntensity = 0.4;
+
     vec3 color = vec3(1.2, 0.9, 0.0);
     vec3 light = normalize(vec3(0.5, 0.2, 1.0));
+
+    float intensity = max(0.0, dot(light, vNormal));
+
+    // Normalize the points from nimIntensity to 1.0
+    intensity = ((1.0 - intensity) * minIntensity) + intensity;
     
-    color = color * max(0.01, dot(light, vNormal));
+    color = color * intensity;
     gl_FragColor = vec4(color, 1.0);
 }
 `;
@@ -28,11 +35,17 @@ void main()
 var fragBackSh = `
 varying vec3 vNormal;
 void main()
-{   
+{
+    float minIntensity = 0.4;
     vec3 color = vec3(0.0, 0.7, 0.0);
     vec3 light = normalize(vec3(0.5, 0.2, 1.0));
+
+    float intensity = max(0.0, dot(light, vNormal));
+
+    // Normalize the points from nimIntensity to 1.0
+    intensity = ((1.0 - intensity) * minIntensity) + intensity;
     
-    color = color * max(0.01, -1.0 * dot(light, vNormal));
+    color = color * intensity;
     gl_FragColor = vec4(color, 1.0);
 }
 `;
@@ -301,8 +314,6 @@ ModelCylinder.prototype.Carve = function(amount, level, radius) {
     var strength = 10;
     var radDist = strength;
     var levelDist = Math.floor(strength / levelHeight);
-    console.log(levelDist);
-    console.log(level);
     var numLevels = this.levels.length;
     for(var i = -levelDist; i <= levelDist; i++){
         for(var j = -radDist; j <= radDist; j++){
@@ -313,11 +324,8 @@ ModelCylinder.prototype.Carve = function(amount, level, radius) {
             if(dist <= 1.0001) {
                 var levelIndex = Math.min(Math.max(0, i + level), numLevels);
                 var radIndex =   (radius + (j + NUM_DEGREE)) % NUM_DEGREE;
-                //var radIndex = j + radius;
-                //console.log(radIndex);
-                console.log(levelIndex);
-                console.log(radIndex);
-                this.levels[levelIndex].radius[radIndex] = amount;
+
+                this.levels[levelIndex].radius[radIndex] += amount;
             }
         }
     }

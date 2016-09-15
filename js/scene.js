@@ -223,11 +223,10 @@ MainScene.prototype.Update = function(){
             if(point != null) {
                 if(this.carving) {
                     // Get Mouse Position on model
-                    this.model.Carve(49, point.Level, point.Angle);
+                    this.model.Carve(-1, point.Level, point.Angle);
                 }
                 else if(this.building) {
-                    console.log(point);
-                    this.model.Carve(51, point.Level, point.Angle);
+                    this.model.Carve(1, point.Level, point.Angle);
                 }
             }
             else{
