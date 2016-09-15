@@ -178,15 +178,35 @@ function Input(){
     }
 }
 
+function GetFileContents(file, callback) {
+    if (!file) {
+        console.log("no file provided");
+        return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function(fileLoadResult) {
+        callback(fileLoadResult.target.result);
+    };
+
+    reader.onerror = function(error) {
+        conosle.log("failed to load file");
+        console.log(error);
+    };
+
+    reader.readAsText(file);
+};
+
 
 function CreateMesh(geometry, vertexShader, fragmentShader, fragmentBackShader){
-    var material = CreateMaterial(vertexShader, fragmentShader, fragmentBackShader);
+    var material = CreateMultiMaterial(vertexShader, fragmentShader, fragmentBackShader);
     var m = new THREE.SceneUtils.createMultiMaterialObject(geometry, material);
     
     return m;
 };
 
-function CreateMaterial(vertexShader, fragmentShader, fragmentBackShader){
+function CreateMultiMaterial(vertexShader, fragmentShader, fragmentBackShader){
     var matFront = new THREE.ShaderMaterial({
         //uniforms: uniforms,
         vertexShader: vertexShader,
@@ -202,6 +222,15 @@ function CreateMaterial(vertexShader, fragmentShader, fragmentBackShader){
     matBack.side = THREE.BackSide;
 
     return [matFront, matBack];
+}
+
+function CreateMaterial(vertexShader, fragmentShader){
+    var mat = new THREE.ShaderMaterial({
+        vertexShader:vertexShader,
+        fragmentShader: fragmentShader
+    });
+
+    return mat;
 }
 
 function CreateCamera(aspectRatio) {
