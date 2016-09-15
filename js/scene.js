@@ -50,7 +50,7 @@ function MainScene() {
     this.LoadGUI();
 
     //this.CreateNewModel("Test");
-    this.LoadModel('large2');
+    //this.LoadModel('large2');
 }
 
 // This probably should be moved to a ui module or something similar
