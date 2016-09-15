@@ -36,21 +36,21 @@ function MainScene() {
     //this.camera = CreateOrtho(1280, 720);
     this.camera.position.set(0, 0, 700);
     this.sceneObject = new THREE.Scene();
-    this.model = new ModelCylinder();
+    this.model = new Model();
     this.rotation = 0;
     this.modelRotX = 0;
     this.modelRotY = 0;
     this.modelList;
     this.activeModelName;
     this.carving = false;
-    this.cube = new Model();
+    //this.cube = new Model();
 
     this.modelSaved = false;
 
     this.LoadGUI();
 
     //this.CreateNewModel("Test");
-    //this.LoadModel('large2');
+    this.LoadModel('large2');
 }
 
 // This probably should be moved to a ui module or something similar
@@ -77,12 +77,13 @@ MainScene.prototype.GetName = function(callback) {
 
 MainScene.prototype.GetFileName = function(e) {
     GetFileContents(e.target.files[0], function(fileContents){
-
-        this.cube.LoadModelFromData(fileContents, function(){
-            console.log(this.cube.GetMesh());
-            this.sceneObject.add(this.cube.GetMesh());
-            this.cube.SetScale(100, 100, 100);
-            this.cubeLoaded = true;
+        this.model = new Model();
+        this.model.LoadModelFromData(fileContents, function(){
+            console.log(this.model.GetMesh());
+            this.ResetScene();
+            this.sceneObject.add(this.model.GetMesh());
+            this.model.SetScale(100, 100, 100);
+            this.modelLoaded = true;
         }.bind(this));
     }.bind(this));
 }
@@ -188,24 +189,34 @@ MainScene.prototype.LoadModelModsGUI = function(){
     this.extrudeGUI.add(this.extrudeModeCtrls, 'ExtrudeRadius', 0, NUM_DEGREE).step(1).name('Radius');
 
     // Index gui
-    this.carveModeCtrls = {};
+    this.moldCtrls = {};
 
-    this.carveGUI = this.modsGUI.addFolder('Mold');
-    this.carveModeCtrls['Carve'] = function() {
+    this.moldGUI = this.modsGUI.addFolder('Mold');
+    this.moldCtrls['Carve'] = function() {
         this.carving = true;
         this.building = false;
+
+        this.model.EndMod();
+        this.model.StartMod();
         $('#model-info').text('Carving');
     }.bind(this);
 
-    this.carveGUI.add(this.carveModeCtrls, 'Carve').name('Carve');
+    this.moldGUI.add(this.moldCtrls, 'Carve').name('Carve');
 
-    this.carveGUI['Build'] = function() {
+    this.moldCtrls['Build'] = function() {
         this.building = true;
         this.carving = false;
+        this.model.EndMod();
+        this.model.StartMod();
+
         $('#model-info').text('Building');
     }.bind(this);
 
-    this.carveGUI.add(this.carveGUI, 'Build').name('Build');
+    this.moldGUI.add(this.moldCtrls, 'Build').name('Build');
+
+    this.moldCtrls['MoldDepth'] = 1;
+    // NUM_DEGREE should be taken off the model when loaded instead of using the const
+    this.moldGUI.add(this.moldCtrls, 'MoldDepth', 1, 5).step(1).name('Depth');
 }
 
 MainScene.prototype.Update = function(){
@@ -223,10 +234,10 @@ MainScene.prototype.Update = function(){
             if(point != null) {
                 if(this.carving) {
                     // Get Mouse Position on model
-                    this.model.Carve(-1, point.Level, point.Angle);
+                    this.model.Carve(-this.moldCtrls["MoldDepth"], point.Level, point.Angle);
                 }
                 else if(this.building) {
-                    this.model.Carve(1, point.Level, point.Angle);
+                    this.model.Carve(this.moldCtrls["MoldDepth"], point.Level, point.Angle);
                 }
             }
             else{
@@ -329,7 +340,9 @@ MainScene.prototype.GetPointFromMouse = function() {
 
     var offset = $('#render-window').offset();
 
-    var vector = new THREE.Vector3(((mouse.x - offset.left) / WINDOW_WIDTH) * 2 - 1, -((mouse.y - offset.top) / WINDOW_HEIGHT) * 2 + 1, 1);
+    // I am reducing the x position of the vector by 15 because some reason the value that is return when using offset.left
+    // is slightly off and a value of 15 seems to correct that
+    var vector = new THREE.Vector3(((mouse.x - offset.left - 15) / WINDOW_WIDTH) * 2 - 1, -((mouse.y - offset.top) / WINDOW_HEIGHT) * 2 + 1, 1);
 
     return this.GetPointFromVector(vector);
 }

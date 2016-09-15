@@ -162,12 +162,17 @@ Model.prototype.LoadModelFromData = function(data, callback){
     }.bind(this));
 }
 
+Model.prototype.FaceIndexToModelPoint = function(faceIndex){
+    return null;
+} 
+
 ModelCylinder.prototype = new ModelAbs();
 ModelCylinder.prototype.constructor = ModelCylinder;
 
 function ModelCylinder(){
     
     this.levels = [];
+    this.snapshot = [];
 }
 
 ModelCylinder.prototype.Create = function(numLevels) {
@@ -325,7 +330,7 @@ ModelCylinder.prototype.Carve = function(amount, level, radius) {
                 var levelIndex = Math.min(Math.max(0, i + level), numLevels);
                 var radIndex =   (radius + (j + NUM_DEGREE)) % NUM_DEGREE;
 
-                this.levels[levelIndex].radius[radIndex] += amount;
+                this.levels[levelIndex].radius[radIndex] = this.snapshot[levelIndex].radius[radIndex] + amount;
             }
         }
     }
@@ -366,3 +371,18 @@ ModelCylinder.prototype.FaceIndexToModelPoint = function(faceIndex){
     output.Angle = Math.floor((faceIndex/2) % NUM_DEGREE);
     return output;
 } 
+
+ModelCylinder.prototype.StartMod = function(){
+    // copy
+    console.log("start mod");
+    for (var i =0; i < this.levels.length; ++i) {
+        var l = new Level();
+        l.radius = new Float32Array(this.levels[i].radius);
+        this.snapshot[i] = l;
+    }
+}
+
+ModelCylinder.prototype.EndMod = function() {
+    console.log("mod end");
+    this.snapshot = [];
+}
