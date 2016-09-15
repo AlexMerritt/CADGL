@@ -1,6 +1,6 @@
 var NUM_DEGREE = 360;
 var tao = Math.PI * 2.0;
-var levelHeight = 1;
+var levelHeight = 3;
 
 var vertSh = `
 varying vec3 vNormal;
@@ -272,7 +272,9 @@ ModelCylinder.prototype.Extrude = function(amount, radius){
 ModelCylinder.prototype.Carve = function(amount, level, radius) {
     var strength = 10;
     var radDist = strength;
-    var levelDist = strength;
+    var levelDist = Math.floor(strength / levelHeight);
+    console.log(levelDist);
+    console.log(level);
     var numLevels = this.levels.length;
     for(var i = -levelDist; i <= levelDist; i++){
         for(var j = -radDist; j <= radDist; j++){
@@ -285,7 +287,8 @@ ModelCylinder.prototype.Carve = function(amount, level, radius) {
                 var radIndex =   (radius + (j + NUM_DEGREE)) % NUM_DEGREE;
                 //var radIndex = j + radius;
                 //console.log(radIndex);
-
+                console.log(levelIndex);
+                console.log(radIndex);
                 this.levels[levelIndex].radius[radIndex] = amount;
             }
         }

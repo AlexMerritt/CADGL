@@ -1,7 +1,7 @@
 // Class Renderer
 function Renderer() {
     this.context = new THREE.WebGLRenderer();
-    this.SetWindowSize(1280, 720);
+    this.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     $('#render-window').append(this.context.domElement);
 }

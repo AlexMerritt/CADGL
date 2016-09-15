@@ -130,8 +130,8 @@ function Input(){
 
     Input.prototype.MouseMove = function (event) {
         //console.log("mouse moved");
-        this.mouseState.x = event.clientX;
-        this.mouseState.y = event.clientY;
+        this.mouseState.x = event.pageX;
+        this.mouseState.y = event.pageY;
 
         //console.log(this.mouseState);
     }
@@ -210,6 +210,11 @@ function CreateCamera(aspectRatio) {
     
     return camera;
 };
+
+function CreateOrtho(width, height) {
+    var camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 10000);
+    return camera;
+}
 
 dat.GUI.prototype.removeAllFolders = function() {
     console.log("removing all folders");

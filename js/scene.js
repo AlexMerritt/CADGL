@@ -31,7 +31,10 @@ MainScene.prototype.constructor = MainScene;
 function MainScene() {
     this.name = "Main Scene Object";
     this.camera = CreateCamera(16.0/9.0);
-    this.camera.position.set(0, 0, 500);
+
+    //funny stuff is hapening with the ortho camera
+    //this.camera = CreateOrtho(1280, 720);
+    this.camera.position.set(0, 0, 700);
     this.sceneObject = new THREE.Scene();
     this.model = new ModelCylinder();
     this.rotation = 0;
@@ -165,18 +168,22 @@ MainScene.prototype.LoadModelModsGUI = function(){
     // Index gui
     this.carveModeCtrls = {};
 
-    this.carveGUI = this.modsGUI.addFolder('Carve');
-    this.carveModeCtrls['ToggleCarve'] = function() {
-        this.carving = !this.carving;
-        if(this.carving){
-            $('#model-info').text('Carving');
-        }
-        else{
-            $('#model-info').text('Rotating');
-        }
+    this.carveGUI = this.modsGUI.addFolder('Mold');
+    this.carveModeCtrls['Carve'] = function() {
+        this.carving = true;
+        this.building = false;
+        $('#model-info').text('Carving');
     }.bind(this);
 
-    this.carveGUI.add(this.carveModeCtrls, 'ToggleCarve').name('Toggle');
+    this.carveGUI.add(this.carveModeCtrls, 'Carve').name('Carve');
+
+    this.carveGUI['Build'] = function() {
+        this.building = true;
+        this.carving = false;
+        $('#model-info').text('Building');
+    }.bind(this);
+
+    this.carveGUI.add(this.carveGUI, 'Build').name('Build');
 }
 
 MainScene.prototype.Update = function(){
@@ -190,11 +197,15 @@ MainScene.prototype.Update = function(){
         if (Input.IsMouseDown()) {
             // This is terrible but it will toggle if the user is using the carve mod
             // or trying to rotate the model
-            if(this.carving){
-                // Get Mouse Position on model
-                var point = this.GetPointFromMouse();
-                if(point != null){
+            var point = this.GetPointFromMouse();
+            if(point != null) {
+                if(this.carving) {
+                    // Get Mouse Position on model
                     this.model.Carve(49, point.Level, point.Angle);
+                }
+                else if(this.building) {
+                    console.log(point);
+                    this.model.Carve(51, point.Level, point.Angle);
                 }
             }
             else{
@@ -297,7 +308,7 @@ MainScene.prototype.GetPointFromMouse = function() {
 
     var offset = $('#render-window').offset();
 
-    var vector = new THREE.Vector3(((mouse.x - offset.left) / 1280) * 2 - 1, -((mouse.y - offset.top) / 720) * 2 + 1, 1);
+    var vector = new THREE.Vector3(((mouse.x - offset.left) / WINDOW_WIDTH) * 2 - 1, -((mouse.y - offset.top) / WINDOW_HEIGHT) * 2 + 1, 1);
 
     return this.GetPointFromVector(vector);
 }
