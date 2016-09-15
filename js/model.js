@@ -185,7 +185,6 @@ ModelCylinder.prototype.Create = function(numLevels) {
         }
 
         this.levels.push(l);
-        console.log(l.radius);
     }
 
     this.BuildMesh();

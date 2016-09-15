@@ -148,3 +148,10 @@ FirebaseDB.prototype.GetModelList = function(callback){
         callback(list);
     });
 }
+
+// This is only here to manage the firebase database.
+// Once the db has too many elements in it, you can no longer
+// delete elements in the firebase console
+FirebaseDB.prototype.DumpDB = function(){
+    this.DBUpdate("/", {});
+}

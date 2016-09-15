@@ -46,8 +46,8 @@ function MainScene() {
     //this.cube = new Model();
 
     this.modelSaved = false;
-
     this.LoadGUI();
+    
 
     //this.CreateNewModel("Test");
     //this.LoadModel('large2');
