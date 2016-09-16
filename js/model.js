@@ -229,14 +229,19 @@ ModelCylinder.prototype.Geometry = function(){
     return g;
 }
 
+ModelCylinder.prototype.UpdateGemotryArea = function(startLevel, numLevels, startRad, numRads){
+    //var g = nre THREE.G
+}
+
 ModelCylinder.prototype.BuildMesh = function(){
     this.mesh = CreateMesh(this.Geometry(), vertSh, fragSh, fragBackSh);
 }
 
 ModelCylinder.prototype.UpdateMesh = function() {
     // All chlidren's meshes need to be updated
+    var g = this.Geometry();
     for(i in this.mesh.children){
-        this.mesh.children[i].geometry = this.Geometry();
+        this.mesh.children[i].geometry = g;
         this.mesh.children[i].verticiesNeedUpdate = true;
     }
     
