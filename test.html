@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>THREE.js HTML App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script>
+       function OpenDialog(id) {
+           console.log(id);
+            var dia = $( "#"+id ).dialog({
+                resizable: false,
+                height: "auto",
+                width: "auto",
+                buttons: {
+                    Ok: function() {
+                        $( this ).dialog( "close" );
+                    },
+                    Cancel: function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <button type="button" onclick="OpenDialog('widen-tutorial')">OpenDialog</button>
+
+    <div id="widen-tutorial" style="display:none;">
+        <div>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/XQu8TTBmGhA" frameborder="0" allowfullscreen></iframe>
+            <p>
+                This is the widen tutorial
+            </p>
+        </div>
+    </div>
+
+    <div id="extrude-tutorial" style="display:none;">
+        <div>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/XQu8TTBmGhA" frameborder="0" allowfullscreen></iframe>
+            <p>
+                This is the extrude tutorial
+            </p>
+        </div>
+    </div>
+</body>

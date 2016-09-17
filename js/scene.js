@@ -75,6 +75,20 @@ MainScene.prototype.GetName = function(callback) {
     });
 }
 
+MainScene.prototype.ShowTutorial = function(id) {
+    console.log(id);
+    var dia = $( "#"+id ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 600,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+}
+
 MainScene.prototype.GetFileName = function(e) {
     GetFileContents(e.target.files[0], function(fileContents){
         this.model = new Model();
@@ -164,6 +178,13 @@ MainScene.prototype.LoadModelModsGUI = function(){
 
     this.widenModCtrls['WidenLevel'] = 0;
     this.widenGUI.add(this.widenModCtrls, 'WidenLevel', 0, this.model.levels.length - 1).step(1).name('Level');
+
+    this.widenModCtrls['WidenTutorial'] = function(){
+        // The value for the show tutorial is the id of the dialog window in the html page
+        this.ShowTutorial("widen-tutorial");
+    }.bind(this);
+
+    this.widenGUI.add(this.widenModCtrls, "WidenTutorial").name("Tutorial");
 
     // Extrude
     this.extrudeModeCtrls = {};
