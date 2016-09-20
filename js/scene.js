@@ -226,12 +226,14 @@ MainScene.prototype.Update = function(){
                 }
             }
             else{
-                var rot = Input.GetMouseDelta();
+                if( this.IsMouseOnRenderWindow()){
+                    var rot = Input.GetMouseDelta();
 
-                this.modelRotX += rot[0] / 50;
-                this.modelRotY += rot[1] / 50;
+                    this.modelRotX += rot[0] / 50;
+                    this.modelRotY += rot[1] / 50;
 
-                this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
+                    this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
+                }
             }
         }
     }
@@ -362,6 +364,20 @@ MainScene.prototype.ToggleCarveMod = function(){
         this.model.StartMod();
         this.buildButton.name("End");
     }
+}
+
+MainScene.prototype.IsMouseOnRenderWindow = function() {
+    var elements = Input.ElementsMounseOn();
+    if (elements != undefined || elements.length > 0)
+    {
+        var elementType = elements[elements.length - 1].tagName;
+        //console.log(elementType);
+        console.log(elementType === "CANVAS");
+
+        return elementType ==="CANVAS";
+    }
+
+    return false;
 }
 
 /*

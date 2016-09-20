@@ -48,6 +48,8 @@ function Mouse() {
 
         this.down = false;
     }
+
+    Mouse.prototype.onElement;
 }
 
 function Input(){
@@ -110,6 +112,7 @@ function Input(){
         mouse.y = this.mouseState.y;
 
         mouse.down = this.mouseState.down;
+        mouse.onElement = this.mouseState.onElement;
 
         return mouse;
     }
@@ -132,6 +135,7 @@ function Input(){
         //console.log("mouse moved");
         this.mouseState.x = event.pageX;
         this.mouseState.y = event.pageY;
+        this.mouseState.onElement = document.querySelectorAll(':hover');
 
         //console.log(this.mouseState);
     }
@@ -175,6 +179,9 @@ function Input(){
 
     Input.prototype.IsMouseDown = function () {
         return this.currentMouse.down;
+    }
+    Input.prototype.ElementsMounseOn = function(){
+        return this.currentMouse.onElement;
     }
 }
 
