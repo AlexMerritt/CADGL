@@ -203,7 +203,8 @@ MainScene.prototype.LoadModelModsGUI = function(){
 
     this.buildGUI.add(this.buildCtrls, 'BuildTutorial').name("Tutorial");
 }
-
+// this.disableFlag is just a flag so I can select what functions get run during updates
+// it's mostly there to disable rotating when carving or disabling carving when rotating
 MainScene.prototype.Update = function(){
     Input.Update();
     this.rotation += 0.01;
@@ -216,25 +217,33 @@ MainScene.prototype.Update = function(){
             // This is terrible but it will toggle if the user is using the carve mod
             // or trying to rotate the model
             var point = this.GetPointFromMouse();
-            if(point != null) {
+            if(point != null && this.disableFlag != "mods") {
                 if(this.carving) {
                     // Get Mouse Position on model
                     this.model.Carve(-this.carveCtrls["CarveDepth"], point.Level, point.Angle);
+                    this.disableFlag = "disableRotate";
                 }
                 else if(this.building) {
                     this.model.Carve(this.buildCtrls["BuildDepth"], point.Level, point.Angle);
+                    this.disableFlag = "disableRotate";
                 }
             }
             else{
-                if( this.IsMouseOnRenderWindow()){
-                    var rot = Input.GetMouseDelta();
+                if(!(this.disableFlag === "disableRotate")){
+                    if( this.IsMouseOnRenderWindow()){
+                        var rot = Input.GetMouseDelta();
 
-                    this.modelRotX += rot[0] / 50;
-                    this.modelRotY += rot[1] / 50;
+                        this.modelRotX += rot[0] / 50;
+                        this.modelRotY += rot[1] / 50;
 
-                    this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
+                        this.model.SetRotation(this.modelRotY,this.modelRotX, 0);
+                        this.disableFlag = "mods";
+                    }
                 }
             }
+        }
+        else{
+            this.disableFlag = null;
         }
     }
 }
@@ -371,8 +380,6 @@ MainScene.prototype.IsMouseOnRenderWindow = function() {
     if (elements != undefined || elements.length > 0)
     {
         var elementType = elements[elements.length - 1].tagName;
-        //console.log(elementType);
-        console.log(elementType === "CANVAS");
 
         return elementType ==="CANVAS";
     }

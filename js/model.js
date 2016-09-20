@@ -20,7 +20,7 @@ void main()
     float minIntensity = 0.4;
 
     vec3 color = vec3(1.2, 0.9, 0.0);
-    vec3 light = normalize(vec3(0.5, 0.2, 1.0));
+    vec3 light = normalize(vec3(0.0, 0.0, 1.0));
 
     float intensity = max(0.0, dot(light, vNormal));
 
@@ -38,7 +38,7 @@ void main()
 {
     float minIntensity = 0.4;
     vec3 color = vec3(0.0, 0.7, 0.0);
-    vec3 light = normalize(vec3(0.5, 0.2, 1.0));
+    vec3 light = normalize(vec3(0.0, 0.0, -1.0));
 
     float intensity = max(0.0, dot(light, vNormal));
 
