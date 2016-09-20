@@ -161,12 +161,7 @@ MainScene.prototype.LoadModelModsGUI = function(){
 
     this.carveGUI = this.modsGUI.addFolder('Carve');
     this.carveCtrls['Carve'] = function() {
-        this.carving = true;
-        this.building = false;
-
-        this.model.EndMod();
-        this.model.StartMod();
-        $('#model-info').text('Carving');
+        this.ToggleCarveMod();
     }.bind(this);
 
     this.carveButton = this.carveGUI.add(this.carveCtrls, 'Carve').name('Start');
@@ -360,18 +355,18 @@ MainScene.prototype.ToggleBuildMod = function(){
 }
 
 MainScene.prototype.ToggleCarveMod = function(){
-    if(this.building){
-        this.building = false;
+    if(this.carving){
+        this.carving = false;
         this.model.EndMod();
-        this.buildButton.name("Start");
+        this.carveButton.name("Start");
     }
     else{
-        this.building = true;
-        this.carving = false;
+        this.carving = true;
+        this.building = false;
         // I want to make sure that there is no mod active when starting the mod
         this.model.EndMod();
         this.model.StartMod();
-        this.buildButton.name("End");
+        this.carveButton.name("End");
     }
 }
 
