@@ -52,14 +52,6 @@
                 <div class="col-md-2">
                     <p>
                         To the right is a list of mods available on the active models. They will be loaded when a new shape is created or loaded
-                        <br>
-                        <br>
-                        
-                        <br>
-                        <b>Extrude</b>
-                        <br>
-                        Extrude the model by a constant value at the select raduis. Click and drag in the Radius box or click the number and type in a value to set the select radius.
-                    </p>
                 </div>
                 <div class="col-md-2">
                     <p>
@@ -92,30 +84,6 @@
                     <p>
                         To rotate the model right click and drag the mouse around.
                     </p>
-
-                    <p>
-                        <b>Mold</b>
-                        <br>
-                        Once either Carve or Build has been click you can click and drag on the model to preform the operation.
-                        <br>
-                        <br>
-                        <p>
-                            Carve
-                            <br>
-                            Click to carve button to start a fixed depth carve based on the depth slider value
-                            <br>
-                            <br>
-                            Build
-                            <br>
-                            Click to the build button to start a fixed depth build based on the depth slider value
-                            <br>
-                            <br>
-                            Depth
-                            <br>
-                            This is how strong of a build or carve
-                        </p>
-                        Click the button to toggle the carving tool. When the carving tool is active click and drag the mouse and it will carve on the model to a fixed depth. Model rotation will be disabled while carving. You can tell which mode you are in based on the text directly under the render window.
-                    </p>
                 </div>
                 <div class="col-md-1"></div>
             </div>
@@ -130,30 +98,37 @@
         </form>
     </div>
 
-    <div id="widen-tutorial" style="display:none;">
+    <div id="carve-tutorial" style="display:none;">
         <div>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/XQu8TTBmGhA" frameborder="0" allowfullscreen></iframe>
             <p>
-                <b>Widen Mod</b>
+                <b>Carve Mod</b>
                 <br>
-                Change the model's width by a constant value the selected level.
+                Cave a path into the model based on the mouse position. Click and drag around the model to add deformations to it.
                 <br>
                 <br>
-                <i>Increment</i>: A button that will Increase the width of the model at the given level when clicked
+                <i>Start</i>: Start a new carve. The models dimentions will be locked to before the carve mod was started to give a consistant carve depth. When click the button will change to <i>End</i>.
                 <br>
-                <i>Decrement</i>: A button that will decrease the width of the model at the given level when clicked
+                <i>End</i>: End the carve and finialize the new shape. When clicked the button will change to <i>Start</i>.
                 <br>
-                <i>Level</i>: Variable slider that can be set the level of the modifcation from 0 to the height of the model
+                <i>Depth</i>: How strong the carve will be applied. The higher the number the deeper the carve will be.
             </p>
         </div>
     </div>
-
-    <div id="extrude-tutorial" style="display:none;">
+    <div id="build-tutorial" style="display:none;">
         <div>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/XQu8TTBmGhA" frameborder="0" allowfullscreen></iframe>
             <p>
-                This is the extrude tutorial
-            </p>
+                <b>Build Mod</b>
+                <br>
+                Build up material along a path into the model based on the mouse position. Click and drag around the model to add deformations to it.
+                <br>
+                <br>
+                <i>Start</i>: Start a new build. The models dimentions will be locked to before the carve mod was started to give a consistant carve depth. When click the button will change to <i>End</i>.
+                <br>
+                <i>End</i>: End the build and finialize the new shape. When clicked the button will change to <i>Start</i>.
+                <br>
+                <i>Depth</i>: How strong the build will be applied. The higher the number the more material that will be applied when building.
         </div>
     </div>
 </body>

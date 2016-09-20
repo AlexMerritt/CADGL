@@ -156,64 +156,11 @@ MainScene.prototype.LoadModelLoadGUI = function() {
 
 MainScene.prototype.LoadModelModsGUI = function(){
     this.modsGUI.removeAllFolders();
-
-    // Need to change the mod gui can be created from mod classes
-    // Width mod gui
-    this.widenModCtrls = {};
-    this.widenGUI = this.modsGUI.addFolder("Widen");
-
-    this.widenModCtrls['WidenInc'] = function(){
-        this.model.Widen(10, this.widenModCtrls['WidenLevel']);
-        this.modelSaved = false;
-    }.bind(this);
-
-    this.widenGUI.add(this.widenModCtrls, 'WidenInc').name("Increment");
-
-    this.widenModCtrls['WidenDec'] = function(){
-        this.model.Widen(-10, this.widenModCtrls['WidenLevel']);
-        this.modelSaved = false;
-    }.bind(this);
-
-    this.widenGUI.add(this.widenModCtrls, 'WidenDec').name("Decrement");
-
-    this.widenModCtrls['WidenLevel'] = 0;
-    this.widenGUI.add(this.widenModCtrls, 'WidenLevel', 0, this.model.levels.length - 1).step(1).name('Level');
-
-    this.widenModCtrls['WidenTutorial'] = function(){
-        // The value for the show tutorial is the id of the dialog window in the html page
-        this.ShowTutorial("widen-tutorial");
-    }.bind(this);
-
-    this.widenGUI.add(this.widenModCtrls, "WidenTutorial").name("Tutorial");
-
-    // Extrude
-    this.extrudeModeCtrls = {};
-
-    this.extrudeGUI = this.modsGUI.addFolder("Extrude");
-
-    this.extrudeModeCtrls['ExtrudeInc'] = function(){
-        this.model.Extrude(10, this.extrudeModeCtrls['ExtrudeRadius']);
-        this.modelSaved = false;
-    }.bind(this);
-
-    this.extrudeGUI.add(this.extrudeModeCtrls, 'ExtrudeInc').name("Increment");
-
-    this.extrudeModeCtrls['ExtrudeDec'] = function(){
-        this.model.Extrude(-10, this.extrudeModeCtrls['ExtrudeRadius']);
-        this.modelSaved = false;
-    }.bind(this);
-
-    this.extrudeGUI.add(this.extrudeModeCtrls, 'ExtrudeDec').name("Decrement");
-
-    this.extrudeModeCtrls['ExtrudeRadius'] = 0;
-    // NUM_DEGREE should be taken off the model when loaded instead of using the const
-    this.extrudeGUI.add(this.extrudeModeCtrls, 'ExtrudeRadius', 0, NUM_DEGREE).step(1).name('Radius');
-
     // Index gui
-    this.moldCtrls = {};
+    this.carveCtrls = {};
 
-    this.moldGUI = this.modsGUI.addFolder('Mold');
-    this.moldCtrls['Carve'] = function() {
+    this.carveGUI = this.modsGUI.addFolder('Carve');
+    this.carveCtrls['Carve'] = function() {
         this.carving = true;
         this.building = false;
 
@@ -222,22 +169,39 @@ MainScene.prototype.LoadModelModsGUI = function(){
         $('#model-info').text('Carving');
     }.bind(this);
 
-    this.moldGUI.add(this.moldCtrls, 'Carve').name('Carve');
+    this.carveButton = this.carveGUI.add(this.carveCtrls, 'Carve').name('Start');
 
-    this.moldCtrls['Build'] = function() {
-        this.building = true;
-        this.carving = false;
-        this.model.EndMod();
-        this.model.StartMod();
+    this.carveCtrls['CarveDepth'] = 1;
+    // NUM_DEGREE should be taken off the model when loaded instead of using the const
+    this.carveGUI.add(this.carveCtrls, 'CarveDepth', 1, 5).step(1).name('Depth');
 
-        $('#model-info').text('Building');
+    this.carveCtrls['CarveTutorial'] = function(){
+        // The value for the show tutorial is the id of the dialog window in the html page
+        this.ShowTutorial('carve-tutorial');
     }.bind(this);
 
-    this.moldGUI.add(this.moldCtrls, 'Build').name('Build');
+    this.carveGUI.add(this.carveCtrls, 'CarveTutorial').name("Tutorial");
 
-    this.moldCtrls['MoldDepth'] = 1;
+    this.buildCtrls = {};
+
+    this.buildGUI = this.modsGUI.addFolder("Build");
+
+    this.buildCtrls['Build'] = function() {
+        this.ToggleBuildMod();
+    }.bind(this);
+
+    this.buildButton = this.buildGUI.add(this.buildCtrls, 'Build').name('Start');
+
+    this.buildCtrls['BuildDepth'] = 1;
     // NUM_DEGREE should be taken off the model when loaded instead of using the const
-    this.moldGUI.add(this.moldCtrls, 'MoldDepth', 1, 5).step(1).name('Depth');
+    this.buildGUI.add(this.buildCtrls, 'BuildDepth', 1, 5).step(1).name('Depth');
+
+    this.buildCtrls['BuildTutorial'] = function(){
+        // The value for the show tutorial is the id of the dialog window in the html page
+        this.ShowTutorial('build-tutorial');
+    }.bind(this);
+
+    this.buildGUI.add(this.buildCtrls, 'BuildTutorial').name("Tutorial");
 }
 
 MainScene.prototype.Update = function(){
@@ -255,10 +219,10 @@ MainScene.prototype.Update = function(){
             if(point != null) {
                 if(this.carving) {
                     // Get Mouse Position on model
-                    this.model.Carve(-this.moldCtrls["MoldDepth"], point.Level, point.Angle);
+                    this.model.Carve(-this.carveCtrls["CarveDepth"], point.Level, point.Angle);
                 }
                 else if(this.building) {
-                    this.model.Carve(this.moldCtrls["MoldDepth"], point.Level, point.Angle);
+                    this.model.Carve(this.buildCtrls["BuildDepth"], point.Level, point.Angle);
                 }
             }
             else{
@@ -366,6 +330,38 @@ MainScene.prototype.GetPointFromMouse = function() {
     var vector = new THREE.Vector3(((mouse.x - offset.left - 15) / WINDOW_WIDTH) * 2 - 1, -((mouse.y - offset.top) / WINDOW_HEIGHT) * 2 + 1, 1);
 
     return this.GetPointFromVector(vector);
+}
+
+MainScene.prototype.ToggleBuildMod = function(){
+    if(this.building){
+        this.building = false;
+        this.model.EndMod();
+        this.buildButton.name("Start");
+    }
+    else{
+        this.building = true;
+        this.carving = false;
+        // I want to make sure that there is no mod active when starting the mod
+        this.model.EndMod();
+        this.model.StartMod();
+        this.buildButton.name("End");
+    }
+}
+
+MainScene.prototype.ToggleCarveMod = function(){
+    if(this.building){
+        this.building = false;
+        this.model.EndMod();
+        this.buildButton.name("Start");
+    }
+    else{
+        this.building = true;
+        this.carving = false;
+        // I want to make sure that there is no mod active when starting the mod
+        this.model.EndMod();
+        this.model.StartMod();
+        this.buildButton.name("End");
+    }
 }
 
 /*
