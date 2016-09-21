@@ -364,7 +364,8 @@ ModelCylinder.prototype.GetPoint = function(cylPoint) {
     output.X = Math.cos(cylPoint.Angle) * cylPoint.Radius;
     output.Z = Math.sin(cylPoint.Angle) * cylPoint.Radius;
 
-    output.Y = cylPoint.Level * levelHeight;
+    // set the y value from -halfHeight to halfHeight so that the model is center of at it's center point
+    output.Y = cylPoint.Level * levelHeight - ((levelHeight * this.levels.length) / 2.0);
 
     return output;
 }

@@ -35,6 +35,9 @@ function MainScene() {
     //funny stuff is hapening with the ortho camera
     this.camera = CreateOrtho(WINDOW_WIDTH, WINDOW_HEIGHT);
     this.camera.position.set(0, 0, 700);
+    this.camera.zoom = 2;
+    this.camera.updateProjectionMatrix();
+
     this.sceneObject = new THREE.Scene();
     this.model = new Model();
     this.rotation = 0;
@@ -289,7 +292,7 @@ MainScene.prototype.LoadModel = function(modelName){
         this.model = new ModelCylinder();
         this.model.CreateFromData(data);
         console.log("db get initialize model");
-        this.model.SetPosition(0, -50, 300);
+        this.model.SetPosition(0, 0, 300);
         this.sceneObject.add(this.model.GetMesh());
 
         this.activeModelName = modelName;
