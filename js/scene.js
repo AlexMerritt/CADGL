@@ -80,15 +80,17 @@ MainScene.prototype.GetName = function(callback) {
 
 MainScene.prototype.ShowTutorial = function(id) {
     console.log(id);
+    var title = $("#"+id)[0].dataset.title;
     var dia = $( "#"+id ).dialog({
         resizable: false,
         height: "auto",
         width: 600,
+        title: title/*,
         buttons: {
             Ok: function() {
                 $( this ).dialog( "close" );
             }
-        }
+        }*/
     });
 }
 
